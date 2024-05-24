@@ -6,14 +6,9 @@
    go mod tidy
    ```
 
-- Inicialize o Redis
+- Inicialize a aplicação com o docker-compose
    ```bash
    docker-compose up -d
-   ```
-
-- Inicie a aplicação
-   ```bash
-   go run cmd/server/main.go
    ```
 
 - Abra outro terminal e execute os testes

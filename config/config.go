@@ -1,6 +1,9 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+	"os"
+)
 
 type Config struct {
 	LimitByIPMaxRPS         int64  `mapstructure:"LIMIT_BY_IP_MAX_RPS"`
@@ -11,17 +14,17 @@ type Config struct {
 	RedisAddr               string `mapstructure:"REDIS_ADDRESS"`
 }
 
-func LoadConfig(path string) (*Config, error) {
+func LoadConfig() (*Config, error) {
 	var cfg Config
-	viper.SetConfigName("app_config")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(path)
-	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, err
+	cfg.LimitByIPMaxRPS = viper.GetInt64("LIMIT_BY_IP_MAX_RPS")
+	cfg.LimitByIPBlockTimeMs = viper.GetInt64("LIMIT_BY_IP_BLOCK_TIME_MS")
+	cfg.LimitByTokenMaxRPS = viper.GetInt64("LIMIT_BY_TOKEN_MAX_RPS")
+	cfg.LimitByTokenBlockTimeMs = viper.GetInt64("LIMIT_BY_TOKEN_BLOCK_TIME_MS")
+	cfg.WebServerPort = viper.GetString("WEB_SERVER_PORT")
+	cfg.RedisAddr = viper.GetString("REDIS_ADDRESS")
+	if cfg.WebServerPort == "" || cfg.RedisAddr == "" {
+		return nil, os.ErrInvalid
 	}
-	err = viper.Unmarshal(&cfg)
-	return &cfg, err
+	return &cfg, nil
 }
